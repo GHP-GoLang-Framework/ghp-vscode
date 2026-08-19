@@ -17,6 +17,8 @@ jobs:
   release:
     name: Package & Publish
     runs-on: ubuntu-latest
+    env:
+      VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -52,11 +54,11 @@ jobs:
       # equivalent yet) — see
       # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#secure-automated-publishing-to-visual-studio-marketplace
       - name: Publish to VS Code Marketplace
-        if: ${{ secrets.VSCE_TOKEN != '' }}
-        run: npx @vscode/vsce publish --packagePath *.vsix -p "${{ secrets.VSCE_TOKEN }}"
+        if: ${{ env.VSCE_TOKEN != '' }}
+        run: npx @vscode/vsce publish --packagePath *.vsix -p "$VSCE_TOKEN"
 
       - name: Marketplace publish skipped
-        if: ${{ secrets.VSCE_TOKEN == '' }}
+        if: ${{ env.VSCE_TOKEN == '' }}
         run: |
           echo "::warning::VSCE_TOKEN secret is not set — skipping Marketplace publish. The .vsix is still attached to the GitHub Release below. See README.md for how to create a publisher and token."
 
