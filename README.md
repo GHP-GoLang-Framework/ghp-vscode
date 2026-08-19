@@ -24,6 +24,16 @@ Every GHP tag is self-closing (ends with `/>`).
 
 The syntax reference is [`docs/template.ghp`](https://github.com/GHP-GoLang-Framework/ghp/blob/main/docs/template.ghp) in the main [`ghp`](https://github.com/GHP-GoLang-Framework/ghp) repository.
 
+## Installation
+
+Not published to the VS Code Marketplace. Grab the `.vsix` from the [latest release](https://github.com/GHP-GoLang-Framework/ghp-vscode/releases/latest) and install it:
+
+```bash
+code --install-extension ghp-<version>.vsix
+```
+
+Or, in VSCode: Extensions view → **"..."** menu → **Install from VSIX...**
+
 ## Development
 
 ```bash
@@ -44,7 +54,7 @@ git tag v$(node -p "require('./package.json').version")
 git push --tags
 ```
 
-The `Release` workflow packages, publishes to the VS Code Marketplace, and attaches the `.vsix` to a GitHub Release.
+The `Release` workflow packages the extension and attaches the `.vsix` to a GitHub Release.
 
 ## Known limitations
 

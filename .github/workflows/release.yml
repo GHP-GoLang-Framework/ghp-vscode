@@ -2,9 +2,9 @@ name: Release
 
 # Triggered by a version tag (vX.Y.Z), pushed after bumping "version" in
 # package.json — see the "Releasing" section in README.md. Packages the
-# extension, publishes it to the VS Code Marketplace, and attaches the
-# .vsix to a GitHub Release either way, so a release always leaves a
-# downloadable artifact even before the Marketplace publish is wired up.
+# extension and attaches the .vsix to a GitHub Release; not published to
+# the VS Code Marketplace — install it manually from the release assets
+# (VSCode: Extensions view -> "..." -> Install from VSIX...).
 on:
   push:
     tags:
@@ -15,10 +15,8 @@ permissions:
 
 jobs:
   release:
-    name: Package & Publish
+    name: Package & Release
     runs-on: ubuntu-latest
-    env:
-      VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -46,21 +44,6 @@ jobs:
 
       - name: Package extension
         run: npx @vscode/vsce package
-
-      # Uses a classic Personal Access Token (VSCE_TOKEN repo secret) via
-      # `vsce publish`. Azure DevOps retires global PATs on 2026-12-01; after
-      # that this step needs to move to Entra ID / workload identity
-      # federation (Azure Pipelines-only today, no GitHub Actions-native
-      # equivalent yet) — see
-      # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#secure-automated-publishing-to-visual-studio-marketplace
-      - name: Publish to VS Code Marketplace
-        if: ${{ env.VSCE_TOKEN != '' }}
-        run: npx @vscode/vsce publish --packagePath *.vsix -p "$VSCE_TOKEN"
-
-      - name: Marketplace publish skipped
-        if: ${{ env.VSCE_TOKEN == '' }}
-        run: |
-          echo "::warning::VSCE_TOKEN secret is not set — skipping Marketplace publish. The .vsix is still attached to the GitHub Release below. See README.md for how to create a publisher and token."
 
       - name: Create GitHub Release
         env:
