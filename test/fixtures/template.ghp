@@ -1,0 +1,34 @@
+<go:import ("fmt")/>
+<go
+    expression
+/>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><go= expression /></title>
+  <link href="css/style.css" rel="stylesheet" />
+</head>
+<body>
+    <go:if variable == value/>
+        ...
+    <go:elif other_variable == other_value/>
+        ...
+    <go:else/>
+        ...
+    <go:endif/>
+
+    <go:switch variable/>
+        <go:case value/>
+
+        <go:case value/>
+
+        <go:default/>
+    <go:endswitch/>
+
+    <go:for expression/>
+        ...
+    <go:endfor/>
+</body>
+</html>

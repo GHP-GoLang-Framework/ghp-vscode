@@ -1,0 +1,62 @@
+{
+  "name": "ghp",
+  "displayName": "GHP",
+  "description": "Syntax highlighting for .ghp files — HTML with real embedded Go.",
+  "version": "0.1.0",
+  "publisher": "ghp-golang-framework",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "ghp",
+    "go",
+    "golang",
+    "template",
+    "html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GHP-GoLang-Framework/ghp-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GHP-GoLang-Framework/ghp-vscode/issues"
+  },
+  "homepage": "https://github.com/GHP-GoLang-Framework/ghp-vscode#readme",
+  "contributes": {
+    "languages": [
+      {
+        "id": "ghp",
+        "aliases": ["GHP", "ghp"],
+        "extensions": [".ghp"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ghp",
+        "scopeName": "source.ghp",
+        "path": "./syntaxes/ghp.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.go": "go"
+        }
+      }
+    ],
+    "snippets": [
+      {
+        "language": "ghp",
+        "path": "./snippets/ghp.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.0.0"
+  },
+  "scripts": {
+    "test": "node test/grammar.test.js"
+  }
+}

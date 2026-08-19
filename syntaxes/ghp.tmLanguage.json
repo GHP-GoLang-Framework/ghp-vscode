@@ -1,0 +1,115 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "GHP",
+  "scopeName": "source.ghp",
+  "comment": "GHP grammar: HTML with <go .../> tags that embed real Go. Every GHP tag is self-closing (ends with '/>'). The order of the patterns in #ghp-tags matters — see the comment there.",
+  "patterns": [
+    { "include": "#ghp-tags" },
+    { "include": "text.html.basic" }
+  ],
+  "repository": {
+    "ghp-tags": {
+      "comment": "Mandatory order: the most specific tags first. `go:import` before the generic `go:*` (otherwise `import` would fall into the control pattern), the block close before the control (otherwise `endif`/`endswitch`/`endfor` could match wrong), and all before plain `go=`/`go`.",
+      "patterns": [
+        { "include": "#tag-import" },
+        { "include": "#tag-block-close" },
+        { "include": "#tag-control" },
+        { "include": "#tag-echo" },
+        { "include": "#tag-statement" }
+      ]
+    },
+
+    "self-closing": {
+      "comment": "The '/' that closes the tag — isolated in its own pattern with a lookahead for '>', so the source.go grammar does not consume it as a division operator (which would break the '(>)' end of tags with Go content).",
+      "match": "/\\s*(?=>)",
+      "name": "punctuation.definition.tag.end.ghp"
+    },
+
+    "tag-import": {
+      "comment": "<go:import (\"fmt\")/> — one or more Go imports.",
+      "name": "meta.tag.import.ghp",
+      "begin": "(<)(go:import)(?![\\w:-])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.ghp" },
+        "2": { "name": "keyword.control.import.ghp" }
+      },
+      "end": "(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.ghp" }
+      },
+      "contentName": "meta.embedded.block.go",
+      "patterns": [
+        { "include": "#self-closing" },
+        { "include": "source.go" }
+      ]
+    },
+
+    "tag-block-close": {
+      "comment": "<go:endif/>, <go:endswitch/>, <go:endfor/> — closing of the block tags with a body.",
+      "name": "meta.tag.close.ghp",
+      "match": "(<)(go:(?:endif|endswitch|endfor))(/>)",
+      "captures": {
+        "1": { "name": "punctuation.definition.tag.begin.ghp" },
+        "2": { "name": "keyword.control.ghp" },
+        "3": { "name": "punctuation.definition.tag.end.ghp" }
+      }
+    },
+
+    "tag-control": {
+      "comment": "Control structures. `else` and `default` take no expression; `if`, `elif`, `switch`, `case`, and `for` take real Go up to the `/>`.",
+      "name": "meta.tag.control.ghp",
+      "begin": "(<)(go:(?:if|else|elif|switch|case|default|for))(?![\\w:-])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.ghp" },
+        "2": { "name": "keyword.control.ghp" }
+      },
+      "end": "(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.ghp" }
+      },
+      "contentName": "meta.embedded.block.go",
+      "patterns": [
+        { "include": "#self-closing" },
+        { "include": "source.go" }
+      ]
+    },
+
+    "tag-echo": {
+      "comment": "<go= expression/> — renders the expression's value, with automatic escaping.",
+      "name": "meta.tag.echo.ghp",
+      "begin": "(<)(go=)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.ghp" },
+        "2": { "name": "keyword.control.echo.ghp" }
+      },
+      "end": "(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.ghp" }
+      },
+      "contentName": "meta.embedded.block.go",
+      "patterns": [
+        { "include": "#self-closing" },
+        { "include": "source.go" }
+      ]
+    },
+
+    "tag-statement": {
+      "comment": "<go .../> — block of Go code (statement), possibly multi-line. The lookahead prevents matching `go:`, `go=`, or identifiers that just start with `go` (e.g.: a `<google>` literal in HTML).",
+      "name": "meta.tag.statement.ghp",
+      "begin": "(<)(go)(?![\\w:=-])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.ghp" },
+        "2": { "name": "keyword.control.ghp" }
+      },
+      "end": "(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.ghp" }
+      },
+      "contentName": "meta.embedded.block.go",
+      "patterns": [
+        { "include": "#self-closing" },
+        { "include": "source.go" }
+      ]
+    }
+  }
+}
